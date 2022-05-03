@@ -1,0 +1,52 @@
+language: node_js
+
+node_js:
+  - 12
+
+notifications:
+  email: false
+
+branches:
+  only:
+    - master
+
+script:
+  - echo "test if deploy"
+  - LATEST_COMMIT=$(git log -1 --format=format:%H --full-diff .)
+  - LATEST_HTML_COMMIT=$(git log -1 --format=format:%H --full-diff ./html)
+  - LATEST_NODEJS_COMMIT=$(git log -1 --format=format:%H --full-diff ./nodejs)
+  - |
+    if [[ $LATEST_COMMIT == $LATEST_HTML_COMMIT ]]
+    then
+      echo "Deploy Github Pages"
+      cd html
+      git remote add www https://thiagohersan:$GHTOKEN@github.com/astrolabe-www/algotypes-divination.git
+      git checkout --orphan gh-pages
+      git rm --cached -r . &> /dev/null
+      git add .
+      git commit -m "update site" &> /dev/null
+      git push www :gh-pages
+      git push www gh-pages
+    fi
+  - |
+    if [[ $LATEST_COMMIT == $LATEST_NODEJS_COMMIT ]]
+    then
+      echo "Deploy Node on Heroku"
+      DEPLOY_HEROKU=true
+    fi
+
+before_deploy:
+  - rvm $(travis_internal_ruby) --fuzzy do ruby -S gem install faraday -v 1.8.0
+  - |
+    if [[ $DEPLOY_HEROKU = true ]]
+    then
+      echo "Deploy Heroku"
+      cd nodejs
+    fi
+
+deploy:
+  - provider: heroku
+    api_key: $HEROKU_KEY
+    app: algotypes-divination
+    on:
+      condition: $DEPLOY_HEROKU = true
