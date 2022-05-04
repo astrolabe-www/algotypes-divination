@@ -19,11 +19,14 @@ script:
     if [[ $LATEST_COMMIT == $LATEST_HTML_COMMIT || 1==1 ]]
     then
       echo "Deploy Github Pages"
+      HTML_FILES="index.html"
       git remote add www https://thiagohersan:$GHTOKEN@github.com/astrolabe-www/algotypes-divination.git
       git checkout --orphan gh-pages
       git rm --cached -r . &> /dev/null
-      cd html
-      git add *.*
+      pushd html
+      cp $HTML_FILES ..
+      popd
+      git add $HTML_FILES
       git commit -m "update site" &> /dev/null
       git push www :gh-pages
       git push www gh-pages
