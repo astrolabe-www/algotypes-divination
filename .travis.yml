@@ -19,9 +19,11 @@ script:
     if [[ $LATEST_COMMIT == $LATEST_HTML_COMMIT ]]
     then
       echo "Deploy Github Pages"
-      cd html
       git remote add www https://thiagohersan:$GHTOKEN@github.com/astrolabe-www/algotypes-divination.git
       git checkout --orphan gh-pages
+      ls -la
+      cd html
+      ls -la
       git rm --cached -r . &> /dev/null
       git add .
       git commit -m "update site" &> /dev/null
@@ -49,4 +51,5 @@ deploy:
     api_key: $HEROKU_KEY
     app: algotypes-divination
     on:
+      branch: main
       condition: $DEPLOY_HEROKU = true
