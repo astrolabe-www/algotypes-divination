@@ -21,10 +21,8 @@ script:
       echo "Deploy Github Pages"
       git remote add www https://thiagohersan:$GHTOKEN@github.com/astrolabe-www/algotypes-divination.git
       git checkout --orphan gh-pages
-      ls -la
-      cd html
-      ls -la
       git rm --cached -r . &> /dev/null
+      cd html
       git add .
       git commit -m "update site" &> /dev/null
       git push www :gh-pages
