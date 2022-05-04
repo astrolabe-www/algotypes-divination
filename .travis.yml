@@ -16,7 +16,7 @@ script:
   - LATEST_HTML_COMMIT=$(git log -1 --format=format:%H --full-diff ./html)
   - LATEST_NODEJS_COMMIT=$(git log -1 --format=format:%H --full-diff ./nodejs)
   - |
-    if [[ $LATEST_COMMIT == $LATEST_HTML_COMMIT ]]
+    if [[ $LATEST_COMMIT == $LATEST_HTML_COMMIT || 1==1 ]]
     then
       echo "Deploy Github Pages"
       git remote add www https://thiagohersan:$GHTOKEN@github.com/astrolabe-www/algotypes-divination.git
