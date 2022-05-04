@@ -23,7 +23,7 @@ script:
       git checkout --orphan gh-pages
       git rm --cached -r . &> /dev/null
       cd html
-      git add .
+      git add *.*
       git commit -m "update site" &> /dev/null
       git push www :gh-pages
       git push www gh-pages
