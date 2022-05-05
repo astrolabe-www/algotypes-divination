@@ -18,6 +18,7 @@ module.exports = (app) => {
     };
 
     Cards.findOne()
+      .sort({ updatedAt: -1 })
       .select("-_id -__v")
       .lean()
       .then((result) => {
@@ -26,7 +27,6 @@ module.exports = (app) => {
           resposeData.cards.push("0", "1", "2");
           resposeData.updatedAt = new Date().toISOString();
         } else {
-          console.log(result);
           resposeData.message = "REAL DATA";
           resposeData.cards.push(...result.cards);
           resposeData.updatedAt = result.updatedAt.toISOString();
@@ -45,13 +45,14 @@ module.exports = (app) => {
     }
 
     const cards = [...JSON.parse(req.body.cards), 0, 1, 2].slice(0, 3);
-    console.log(cards);
+
+    let message = "";
 
     Cards.findOne()
+      .sort({ updatedAt: -1 })
       .then((result) => {
-        let message = "";
         if (!result) {
-          message = `NEW OBJECT CARDS: ${cards}`;
+          message = `FIRST CARDS: ${cards}`;
           new Cards({ cards }).save();
         } else {
           message = `DB CARDS: ${result.cards}`;
@@ -64,13 +65,9 @@ module.exports = (app) => {
           const sameDay = update.hasSame(now, "day");
           const pastUpdateTime = now.hour > UPDATE_HOUR;
 
-          // console.log(result);
-          console.log(`sameDay: ${sameDay} pastUpdate: ${pastUpdateTime}`);
-
           if (!sameDay && pastUpdateTime) {
             message = `NEW CARDS: ${cards}`;
-            result.cards = [...cards];
-            result.save();
+            new Cards({ cards }).save();
           }
         }
 
