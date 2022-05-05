@@ -1,0 +1,10 @@
+#pragma once
+
+String const WIFI_SSID = "my-id";
+String const WIFI_PASS = "my-password";
+
+String const API_HOST = "app.host.com";
+String const API_ENDPOINT = "/foo";
+String const API_TOKEN = "blabla123";
+int const API_PORT = 443;
+const char API_FINGERPRINT[] PROGMEM = "12 23 34 45 56 67 78 89 90 0A AB BC CD DE EF F0 01 12 23 34";
