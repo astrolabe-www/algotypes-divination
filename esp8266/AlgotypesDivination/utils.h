@@ -5,7 +5,9 @@
 
 #include "parameters.h"
 
-void postCardsToServer(int cards[3]) {
+bool postCardsToServer(int cards[3]) {
+  bool success = false;
+
   WiFiClientSecure httpClient;
   httpClient.setFingerprint(API_FINGERPRINT);
   httpClient.setTimeout(1000);
@@ -13,8 +15,8 @@ void postCardsToServer(int cards[3]) {
   String postPath = API_ENDPOINT + "/" + API_TOKEN;
 
   if (!httpClient.connect(API_HOST, API_PORT)) {
-    Serial.printf("\n\nCouldn't connect to server ...");
-    return;
+    Serial.println("Couldn't connect to server ...");
+    return success;
   }
 
   String body = "{ \"cards\" : \"[" +
@@ -33,10 +35,15 @@ void postCardsToServer(int cards[3]) {
 
   while (httpClient.available()) {
     String line = httpClient.readStringUntil('\n');
-    Serial.println(line);
+    if (line.indexOf("success") > 0) {
+      Serial.println(line);
+      success = true;
+    }
   }
+
   httpClient.print("Connection: close\r\n\r\n");
   httpClient.stop();
+  return success;
 }
 
 void connectToWiFi() {

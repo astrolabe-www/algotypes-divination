@@ -6,7 +6,9 @@
 
 #include "utils.h"
 
-long POST_PERIOD = 60 * 1e3;
+long POST_PERIOD = 15 * 60 * 1e3;
+long POST_RETRY_PERIOD = 1 * 60 * 1e3;
+
 long nextPost = 0;
 
 void setup() {
@@ -26,9 +28,12 @@ void loop() {
       random(0, 22),
       random(0, 22)
     };
-    postCardsToServer(cards);
-    nextPost = millis() + POST_PERIOD;
 
+    if (postCardsToServer(cards)) {
+      nextPost = millis() + POST_PERIOD;
+    } else {
+      nextPost = millis() + POST_RETRY_PERIOD;
+    }
     // TODO: continue sniffing
   }
 }
