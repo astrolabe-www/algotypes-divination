@@ -39,7 +39,7 @@ module.exports = (app) => {
       });
   });
 
-  router.post("/", (req, res) => {
+  router.post(`/${process.env.POST_TOKEN}`, (req, res) => {
     if (!("cards" in req.body)) {
       req.body.cards = "[0, 1, 2]";
     }
