@@ -10,7 +10,7 @@ bool postCardsToServer(int cards[3]) {
 
   WiFiClientSecure httpClient;
   httpClient.setFingerprint(API_FINGERPRINT);
-  httpClient.setTimeout(10000);
+  httpClient.setTimeout(1000);
 
   String postPath = API_ENDPOINT + "/" + API_TOKEN;
 
@@ -53,7 +53,7 @@ void connectToWiFi() {
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_SSID.c_str(), WIFI_PASS.c_str());
 
-  for (int counter = 0; (WiFi.status() != WL_CONNECTED) && (counter < 128); counter++) {
+  for (int counter = 0; (WiFi.status() != WL_CONNECTED) && (counter < 256); counter++) {
     delay(100);
     Serial.print(".");
   }

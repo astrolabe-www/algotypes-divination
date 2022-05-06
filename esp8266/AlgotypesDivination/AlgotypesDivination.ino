@@ -14,7 +14,6 @@ unsigned long nextPost = 0;
 void setup() {
   Serial.begin(115200);
   delay(10);
-  connectToWiFi();
   // TODO: start sniffing
 }
 
@@ -23,20 +22,23 @@ void loop() {
 
   if (now > nextPost) {
     // TODO: stop sniffing
-    // TODO: calculate cards from sniff
 
+    // TODO: calculate cards from sniff
     int cards[3] = {
       random(0, 22),
       random(0, 22),
       random(0, 22)
     };
 
+    connectToWiFi();
     if (postCardsToServer(cards)) {
       nextPost = now + POST_PERIOD;
     } else {
       nextPost = now + POST_PERIOD_RETRY;
       Serial.println("Retry in 1 minute");
     }
+
+    disconnectFromWiFi();
     // TODO: continue sniffing
   } else {
     delay(10);
