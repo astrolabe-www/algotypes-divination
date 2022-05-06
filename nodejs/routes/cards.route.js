@@ -63,7 +63,7 @@ module.exports = (app) => {
           );
 
           const sameDay = update.hasSame(now, "day");
-          const pastUpdateTime = now.hour > UPDATE_HOUR;
+          const pastUpdateTime = now.hour >= UPDATE_HOUR;
 
           if (!sameDay && pastUpdateTime) {
             message = `NEW CARDS: ${cards}`;
