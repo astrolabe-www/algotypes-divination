@@ -11,7 +11,7 @@ const routeCards = require("./routes/cards.route");
 
 env.config();
 
-const PORT = process.env.PORT || 5432;
+const PORT = process.env.PORT || process.env.PORT_TEST;
 const app = express();
 
 mongoose
