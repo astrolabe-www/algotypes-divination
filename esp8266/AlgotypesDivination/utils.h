@@ -38,6 +38,7 @@ bool postCardsToServer(int cards[3]) {
     if (line.indexOf("success") > 0) {
       Serial.println(line);
       success = true;
+      break;
     }
   }
 
