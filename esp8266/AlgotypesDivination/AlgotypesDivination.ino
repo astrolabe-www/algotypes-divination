@@ -6,10 +6,10 @@
 
 #include "utils.h"
 
-long POST_PERIOD = 15 * 60 * 1e3;
-long POST_RETRY_PERIOD = 1 * 60 * 1e3;
+long POST_PERIOD = 15 * 60 * 1000;
+long POST_PERIOD_RETRY = 1 * 60 * 1000;
 
-long nextPost = 0;
+unsigned long nextPost = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -19,7 +19,9 @@ void setup() {
 }
 
 void loop() {
-  if (millis() > nextPost) {
+  unsigned long now = millis();
+
+  if (now > nextPost) {
     // TODO: stop sniffing
     // TODO: calculate cards from sniff
 
@@ -30,10 +32,13 @@ void loop() {
     };
 
     if (postCardsToServer(cards)) {
-      nextPost = millis() + POST_PERIOD;
+      nextPost = now + POST_PERIOD;
     } else {
-      nextPost = millis() + POST_RETRY_PERIOD;
+      nextPost = now + POST_PERIOD_RETRY;
+      Serial.println("Retry in 1 minute");
     }
     // TODO: continue sniffing
+  } else {
+    delay(10);
   }
 }

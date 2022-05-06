@@ -10,7 +10,7 @@ bool postCardsToServer(int cards[3]) {
 
   WiFiClientSecure httpClient;
   httpClient.setFingerprint(API_FINGERPRINT);
-  httpClient.setTimeout(1000);
+  httpClient.setTimeout(10000);
 
   String postPath = API_ENDPOINT + "/" + API_TOKEN;
 
