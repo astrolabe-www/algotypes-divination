@@ -15,7 +15,7 @@ const logPostResponse = (response) => {
     `${response.in.timestamp} |  out: [ ${response.out.cards} ] @ ${response.out.timestamp}`
   );
   console.log(`\n`);
-}
+};
 
 module.exports = (app) => {
   const router = Router();
