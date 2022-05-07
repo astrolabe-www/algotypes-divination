@@ -6,6 +6,17 @@ const Cards = require("../models/cards.model");
 const TIMEZONE_IANA = "Europe/Berlin";
 const UPDATE_HOUR = 8;
 
+const logPostResponse = (response) => {
+  console.log(`${response.in.timestamp} | type: ${response.out.type}`);
+  console.log(
+    `${response.in.timestamp} |   in: [ ${response.in.cards} ] @ ${response.in.timestamp}`
+  );
+  console.log(
+    `${response.in.timestamp} |  out: [ ${response.out.cards} ] @ ${response.out.timestamp}`
+  );
+  console.log(`\n`);
+}
+
 module.exports = (app) => {
   const router = Router();
   app.use("/cards", router);
@@ -84,14 +95,7 @@ module.exports = (app) => {
           }
         }
 
-        console.log(`${response.in.timestamp} | type: ${response.out.type}`);
-        console.log(
-          `${response.in.timestamp} |   in: [ ${response.in.cards} ] @ ${response.in.timestamp}`
-        );
-        console.log(
-          `${response.in.timestamp} |  out: [ ${response.out.cards} ] @ ${response.out.timestamp}`
-        );
-        console.log(`\n`);
+        logPostResponse(response);
 
         res.status(200).send({
           success: true,
