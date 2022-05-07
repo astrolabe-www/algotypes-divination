@@ -11,10 +11,10 @@ module.exports = (app) => {
   app.use("/cards", router);
 
   router.get("/", (_, res) => {
-    const resposeData = {
-      message: "",
+    const respose = {
+      type: "",
+      timestamp: "",
       cards: [],
-      updatedAt: "",
     };
 
     Cards.findOne()
@@ -23,18 +23,18 @@ module.exports = (app) => {
       .lean()
       .then((result) => {
         if (!result) {
-          resposeData.message = "MADE UP DATA";
-          resposeData.cards.push("0", "1", "2");
-          resposeData.updatedAt = new Date().toISOString();
+          respose.type = "MADE UP DATA";
+          respose.cards.push("0", "1", "2");
+          respose.timestamp = new Date().toISOString();
         } else {
-          resposeData.message = "REAL DATA";
-          resposeData.cards.push(...result.cards);
-          resposeData.updatedAt = result.updatedAt.toISOString();
+          respose.type = "REAL DATA";
+          respose.cards.push(...result.cards);
+          respose.timestamp = result.updatedAt.toISOString();
         }
 
         res.status(200).send({
           success: true,
-          data: resposeData,
+          data: respose,
         });
       });
   });
@@ -46,17 +46,26 @@ module.exports = (app) => {
 
     const cards = [...JSON.parse(req.body.cards), 0, 1, 2].slice(0, 3);
 
-    let message = "";
-
     Cards.findOne()
       .sort({ updatedAt: -1 })
       .then((result) => {
+        const response = {
+          in: {
+            type: "INPUT",
+            timestamp: DateTime.now().toUTC(),
+            cards: [...cards],
+          },
+          out: {
+            type: "",
+            timestamp: DateTime.now().toUTC(),
+            cards: [...cards],
+          },
+        };
+
         if (!result) {
-          message = `FIRST CARDS: ${cards}`;
+          response.out.type = "CREATE CARDS";
           new Cards({ cards }).save();
         } else {
-          message = `DB CARDS: ${result.cards}`;
-
           const now = DateTime.now().setZone(TIMEZONE_IANA);
           const update = DateTime.fromJSDate(result.updatedAt).setZone(
             TIMEZONE_IANA
@@ -66,14 +75,27 @@ module.exports = (app) => {
           const pastUpdateTime = now.hour >= UPDATE_HOUR;
 
           if (!sameDay && pastUpdateTime) {
-            message = `NEW CARDS: ${cards}`;
+            response.out.type = "UPDATE CARDS";
             new Cards({ cards }).save();
+          } else {
+            response.out.type = "READ CARDS";
+            response.out.cards = [...result.cards];
+            response.out.timestamp = result.updatedAt.toISOString();
           }
         }
 
+        console.log(`${response.in.timestamp} | type: ${response.out.type}`);
+        console.log(
+          `${response.in.timestamp} |   in: [ ${response.in.cards} ] @ ${response.in.timestamp}`
+        );
+        console.log(
+          `${response.in.timestamp} |  out: [ ${response.out.cards} ] @ ${response.out.timestamp}`
+        );
+        console.log(`\n`);
+
         res.status(200).send({
           success: true,
-          data: { message },
+          data: response,
         });
       })
       .catch((err) => {
