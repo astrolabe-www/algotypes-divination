@@ -2,12 +2,14 @@
 #include "sdk_structs.h"
 
 Channel PacketCounter::mChannels[PacketCounter::NUM_CHANNELS];
+uint8 PacketCounter::orderedChannels[PacketCounter::NUM_CHANNELS];
 
 uint8_t PacketCounter::_hopChannel = 0;
 bool PacketCounter::_isRunning = false;
 long PacketCounter::_nextHop = 0;
 
 void PacketCounter::reset() {
+  Serial.println("Reset Count");
   for (int c = 0; c < NUM_CHANNELS; c++) {
     mChannels[c].id = c + 1;
     mChannels[c].rssiMax = -10000;
@@ -17,9 +19,11 @@ void PacketCounter::reset() {
 }
 
 void PacketCounter::start() {
+  Serial.println("Start Count");
+
   reset();
   _hopChannel = 0;
-  _nextHop = millis() + CHANNEL_HOP_INTERVAL_MS;
+  _nextHop = millis() + HOP_INTERVAL;
 
   wifi_station_disconnect();
   wifi_set_opmode(STATION_MODE);
@@ -32,47 +36,20 @@ void PacketCounter::start() {
 }
 
 void PacketCounter::stop() {
+  Serial.println("Stop Count");
+
   wifi_promiscuous_enable(0);
   wifi_station_disconnect();
   _isRunning = false;
 
   for (int c = 0; c < NUM_CHANNELS; c++) {
-    Serial.printf("ch: %u | rssi: %d | packets: %u | payload: %u | pay/pak: %u\n",
-                  mChannels[c].id,
-                  mChannels[c].rssiMax,
-                  mChannels[c].packetCount,
-                  mChannels[c].payloadSum,
-                  mChannels[c].payloadSum / mChannels[c].packetCount
-                 );
+    mChannels[c].printToSerial();
   }
 
-  Serial.printf("Sort by RSSI\n");
-  std::sort(mChannels, mChannels + NUM_CHANNELS, Channel::byRssi);
-  for (int c = 0; c < NUM_CHANNELS; c++) {
-    Serial.printf("%u, ", mChannels[c].id);
-  }
-  Serial.printf("\n");
-
-  Serial.printf("Sort by Packet Count\n");
-  std::sort(mChannels, mChannels + NUM_CHANNELS, Channel::byPacketCount);
-  for (int c = 0; c < NUM_CHANNELS; c++) {
-    Serial.printf("%u, ", mChannels[c].id);
-  }
-  Serial.printf("\n");
-
-  Serial.printf("Sort by Payload Sum\n");
-  std::sort(mChannels, mChannels + NUM_CHANNELS, Channel::byPayload);
-  for (int c = 0; c < NUM_CHANNELS; c++) {
-    Serial.printf("%u, ", mChannels[c].id);
-  }
-  Serial.printf("\n");
-
-  Serial.printf("Sort by Payload / Packet\n");
   std::sort(mChannels, mChannels + NUM_CHANNELS, Channel::byPayloadRatio);
   for (int c = 0; c < NUM_CHANNELS; c++) {
-    Serial.printf("%u, ", mChannels[c].id);
+    orderedChannels[c] = mChannels[c].id - 1;
   }
-  Serial.printf("\n");
 }
 
 void PacketCounter::analyzePackets(uint8_t *buff, uint16_t buff_length) {
@@ -92,9 +69,8 @@ void PacketCounter::analyzePackets(uint8_t *buff, uint16_t buff_length) {
     if (_hopChannel < (NUM_CHANNELS - 1)) {
       _hopChannel = (_hopChannel + 1) % NUM_CHANNELS;
       wifi_set_channel(_hopChannel + 1);
-      _nextHop = millis() + CHANNEL_HOP_INTERVAL_MS;
+      _nextHop = millis() + HOP_INTERVAL;
     } else {
-      Serial.println("Stop Count");
       stop();
     }
   }

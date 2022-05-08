@@ -10,18 +10,19 @@
 const long POST_PERIOD = 60 * 60 * 1000;
 const long POST_PERIOD_RETRY = 1 * 60 * 1000;
 
-unsigned long nextPost = 0;
+const long COUNT_PERIOD = 15 * 60 * 1000;
 
-const int NUM_CARDS = 22;
-int CARDS[NUM_CARDS];
+unsigned long nextPost = 0;
+unsigned long nextCount = 0;
+
+const int NUM_CARDS = 3;
+int CARDS[NUM_CARDS] = {0, 1, 2};
 
 void setup() {
   Serial.begin(115200);
   delay(10);
-
-  for (int i = 0; i < NUM_CARDS; i++) {
-    CARDS[i] = i;
-  }
+  Serial.println("\n");
+  PacketCounter::start();
 }
 
 void loop() {
@@ -29,27 +30,24 @@ void loop() {
 
   if (!PacketCounter::isRunning()) {
     if (now > nextPost) {
-      // TODO: calculate cards from Counter
-      for (int i = 0; i < NUM_CARDS - 1; i++) {
-        int j = random(i, NUM_CARDS);
-        int temp = CARDS[i];
-        CARDS[i] = CARDS[j];
-        CARDS[j] = temp;
+      for (int i = 0; i < NUM_CARDS; i++) {
+        int cardRoot = PacketCounter::orderedChannels[2 * i];
+        int cardMod = PacketCounter::orderedChannels[2 * i + 1];
+        CARDS[i] = 2 * cardRoot + (cardMod % 2);
       }
 
       connectToWiFi();
-      delay(1000);
-      nextPost = now + POST_PERIOD;
       if (postCardsToServer(CARDS)) {
+        Serial.println("POSTed");
         nextPost = now + POST_PERIOD;
       } else {
-        nextPost = now + POST_PERIOD_RETRY;
         Serial.println("Retry in 1 minute");
+        nextPost = now + POST_PERIOD_RETRY;
       }
       disconnectFromWiFi();
-    } else {
-      Serial.println("Start Count");
+    } else if (now > nextCount) {
       PacketCounter::start();
+      nextCount = now + COUNT_PERIOD;
     }
   } else {
     delay(10);

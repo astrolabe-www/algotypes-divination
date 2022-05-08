@@ -48,7 +48,7 @@ bool postCardsToServer(int cards[3]) {
 }
 
 void connectToWiFi() {
-  Serial.printf("\n\nConnecting to WiFi ...");
+  Serial.printf("\nConnecting to WiFi ...");
   WiFi.mode(WIFI_OFF);
   delay(100);
   WiFi.mode(WIFI_STA);
@@ -59,12 +59,14 @@ void connectToWiFi() {
     Serial.print(".");
   }
   Serial.println(".");
+
   if (WiFi.status() != WL_CONNECTED) {
     Serial.printf("\n\nERROR connecting to WiFi !!!\n");
   }
 }
 
 void disconnectFromWiFi() {
+  Serial.printf("\nDisconnecting from WiFi ...\n");
   WiFi.mode(WIFI_OFF);
   delay(100);
   WiFi.mode(WIFI_STA);
