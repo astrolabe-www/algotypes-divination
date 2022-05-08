@@ -5,6 +5,7 @@
 *****/
 
 #include "utils.h"
+#include "PacketCounter.h"
 
 const long POST_PERIOD = 60 * 60 * 1000;
 const long POST_PERIOD_RETRY = 1 * 60 * 1000;
@@ -21,34 +22,35 @@ void setup() {
   for (int i = 0; i < NUM_CARDS; i++) {
     CARDS[i] = i;
   }
-
-  // TODO: start sniffing
 }
 
 void loop() {
   unsigned long now = millis();
 
-  if (now > nextPost) {
-    // TODO: stop sniffing
+  if (!PacketCounter::isRunning()) {
+    if (now > nextPost) {
+      // TODO: calculate cards from Counter
+      for (int i = 0; i < NUM_CARDS - 1; i++) {
+        int j = random(i, NUM_CARDS);
+        int temp = CARDS[i];
+        CARDS[i] = CARDS[j];
+        CARDS[j] = temp;
+      }
 
-    // TODO: calculate cards from sniff
-    for (int i = 0; i < NUM_CARDS - 1; i++) {
-      int j = random(i, NUM_CARDS);
-      int temp = CARDS[i];
-      CARDS[i] = CARDS[j];
-      CARDS[j] = temp;
-    }
-
-    connectToWiFi();
-    if (postCardsToServer(CARDS)) {
+      connectToWiFi();
+      delay(1000);
       nextPost = now + POST_PERIOD;
+      if (postCardsToServer(CARDS)) {
+        nextPost = now + POST_PERIOD;
+      } else {
+        nextPost = now + POST_PERIOD_RETRY;
+        Serial.println("Retry in 1 minute");
+      }
+      disconnectFromWiFi();
     } else {
-      nextPost = now + POST_PERIOD_RETRY;
-      Serial.println("Retry in 1 minute");
+      Serial.println("Start Count");
+      PacketCounter::start();
     }
-
-    disconnectFromWiFi();
-    // TODO: continue sniffing
   } else {
     delay(10);
   }
