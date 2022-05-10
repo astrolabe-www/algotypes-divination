@@ -77,7 +77,9 @@ module.exports = (app) => {
           response.out.type = "CREATE CARDS";
           new Cards({ cards }).save();
         } else {
-          const now = DateTime.now().setZone(TIMEZONE_IANA);
+          const now = DateTime.now()
+            .setZone(TIMEZONE_IANA)
+            .plus({ minutes: 15 });
           const update = DateTime.fromJSDate(result.updatedAt).setZone(
             TIMEZONE_IANA
           );
