@@ -1,17 +1,25 @@
 :root {
   --card-width: 25%;
   --card-border-radius: 8px;
-  --card-title-padding-v: 4px;
+  --card-title-font-size: 16px;
+  --card-title-padding-top: 4px;
+  --card-title-padding-bottom: 3px;
   --card-title-padding-h: 0;
   --card-text-font-size: 16px;
   --card-text-padding-v: 10px;
   --card-text-padding-h: 14px;
 }
 
+@font-face {
+  font-family: montserrat;
+  src: url('./fonts/Montserrat-Light.ttf');
+}
+
 html,
 body {
   margin: 0;
   padding: 0;
+  font-family: montserrat;
 }
 
 .background {
@@ -57,7 +65,8 @@ body {
 
 .card-number,
 .card-title {
-  padding: var(--card-title-padding-v) var(--card-title-padding-h);
+  padding: var(--card-title-padding-top) var(--card-title-padding-h) var(--card-title-padding-bottom);
+  font-size: var(--card-title-font-size);
 }
 
 .card-text {
