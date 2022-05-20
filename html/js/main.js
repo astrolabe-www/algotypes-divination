@@ -1,7 +1,7 @@
 const DateTime = luxon.DateTime;
 const API_URL = "https://algotypes-divination.herokuapp.com/cards";
 
-const REFRESH_LATER = 6 * 60 * 60 * 1000;
+const REFRESH_LATER = 1 * 60 * 60 * 1000;
 const REFRESH_SOON = 60 * 1000;
 
 const RETRY_LIMIT = 32;
@@ -62,9 +62,14 @@ function update() {
       const cardTime = DateTime.fromISO(res.timestamp, { zone: "utc" });
       const cardFresh = DateTime.utc().hasSame(cardTime, "day");
       const overLimit = retryCount > RETRY_LIMIT;
-      const updateTime = cardFresh || overLimit ? REFRESH_LATER : REFRESH_SOON;
       updateCards(res.cards);
-      setTimeout(fadeUpdate, updateTime);
+
+      if (cardFresh || overLimit) {
+        retryCount = 0;
+        setTimeout(fadeUpdate, REFRESH_LATER);
+      } else {
+        setTimeout(fadeUpdate, REFRESH_SOON);
+      }
     })
     .catch((e) => console.log(`${e}`));
 }
