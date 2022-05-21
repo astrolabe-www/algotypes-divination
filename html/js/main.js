@@ -23,7 +23,7 @@ async function getCards() {
   return responseJson.data;
 }
 
-const toHexString = (x) => ("00" + x.toString(16)).slice(-2);
+const toHexString = (x) => ("00" + x.toString(16)).slice(-2).toUpperCase();
 
 const fadeCards = (className, val) => {
   const cardEls = Array.from(document.getElementsByClassName(className));
@@ -44,7 +44,7 @@ function updateCards(cards) {
 
     numberEl.innerHTML = `0x${toHexString(cardIndex)}`;
     titleEl.innerHTML = `${cardInfo.name.en}`;
-    textEl.innerHTML = `${cardInfo.algorithm.pt}<br><br>${cardInfo.message.en}`;
+    textEl.innerHTML = `${cardInfo.algorithm.en}<br><br>${cardInfo.message.en}`;
   });
 
   setTimeout(() => fadeCards("back", 0), 1);
