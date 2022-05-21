@@ -35,15 +35,16 @@ function updateCards(cards) {
   const cardEls = Array.from(document.getElementsByClassName("card"));
 
   cardEls.forEach((el) => {
-    const cardIndex = parseInt(el.getAttribute("data-index"));
     const numberEl = el.querySelector(".card-number");
     const titleEl = el.querySelector(".card-title");
     const textEl = el.querySelector(".card-text");
 
-    // TODO: update DOM with actual content
-    numberEl.innerHTML = `0x${toHexString(cards[cardIndex])}`;
-    titleEl.innerHTML = `${cardIndex}-TITLE-${cards[cardIndex]}`;
-    textEl.innerHTML = PLACEHOLDER;
+    const cardIndex = cards[parseInt(el.getAttribute("data-index"))];
+    const cardInfo = CARDS[cardIndex];
+
+    numberEl.innerHTML = `0x${toHexString(cardIndex)}`;
+    titleEl.innerHTML = `${cardInfo.name.en}`;
+    textEl.innerHTML = `${cardInfo.algorithm.pt}<br><br>${cardInfo.message.en}`;
   });
 
   setTimeout(() => fadeCards("back", 0), 1);
