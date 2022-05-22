@@ -1,13 +1,13 @@
 :root {
   --card-width: 25%;
-  --card-border-radius: 8px;
-  --card-title-font-size: 16px;
-  --card-title-padding-top: 5px;
-  --card-title-padding-bottom: 3px;
+  --card-border-radius: 0.666vw;
+  --card-title-font-size: 1.15vw;
+  --card-title-padding-v-small: 0.35vw;
+  --card-title-padding-v-large: 1.71vw;
   --card-title-padding-h: 0;
-  --card-text-font-size: 16px;
-  --card-text-padding-v: 10px;
-  --card-text-padding-h: 14px;
+  --card-text-font-size: 1.15vw;
+  --card-text-padding-v: 1.1vw;
+  --card-text-padding-h: 1.4vw;
 }
 
 @font-face {
@@ -65,8 +65,16 @@ body {
 
 .card-number,
 .card-title {
-  padding: var(--card-title-padding-top) var(--card-title-padding-h) var(--card-title-padding-bottom);
+  padding: var(--card-title-padding-v-small) var(--card-title-padding-h);
   font-size: var(--card-title-font-size);
+}
+
+.card-number {
+  padding-top: var(--card-title-padding-v-large);
+}
+
+.card-title {
+  padding-bottom: var(--card-title-padding-v-large);
 }
 
 .card-text {
