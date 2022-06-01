@@ -45,6 +45,18 @@ const cardsNeedUpdate = (lastUpdateDateJS, nowOffsetMinutes = 0) => {
   return !sameDay && pastUpdateTime;
 };
 
+const RANDOM_CARDS = Array.from({ length: 22 }, (_, i) => i);
+const draw3Cards = () => {
+  for (let i = 0; i < RANDOM_CARDS.length - 1; i++) {
+    const randRange = RANDOM_CARDS.length - i;
+    let j = i + Math.floor(randRange * Math.random());
+    let temp = RANDOM_CARDS[i];
+    RANDOM_CARDS[i] = RANDOM_CARDS[j];
+    RANDOM_CARDS[j] = temp;
+  }
+  return RANDOM_CARDS.slice(0, 3);
+};
+
 module.exports = (app) => {
   const router = Router();
   app.use("/cards", router);
@@ -62,8 +74,7 @@ module.exports = (app) => {
       .lean()
       .then((result) => {
         if (!result || getRetries > GET_RETRY_LIMIT) {
-          // TODO: random draw
-          const cards = [0, 1, 2];
+          const cards = draw3Cards();
           new Cards({ cards }).save();
           respose.cards.push(...cards);
           respose.timestamp = new Date().toISOString();
