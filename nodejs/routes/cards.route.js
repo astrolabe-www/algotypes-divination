@@ -6,6 +6,11 @@ const Cards = require("../models/cards.model");
 const TIMEZONE_IANA = "Europe/Berlin";
 const UPDATE_HOUR = 8;
 
+const GET_RETRY_DELAY_MILLIS = 2 * 60 * 1000;
+const GET_RETRY_LIMIT = 8;
+
+let getRetries = 0;
+
 const logPostResponse = (response) => {
   console.log(`${response.in.timestamp} | type: ${response.out.type}`);
   console.log(
@@ -17,15 +22,38 @@ const logPostResponse = (response) => {
   console.log(`\n`);
 };
 
+const getNextUpdateDelayMillis = () => {
+  const now = DateTime.now().setZone(TIMEZONE_IANA);
+  const updateDayOffset = now.hour >= UPDATE_HOUR ? 1 : 0;
+  const nextUpdate = DateTime.now()
+    .setZone(TIMEZONE_IANA)
+    .startOf("day")
+    .plus({ days: updateDayOffset, hours: UPDATE_HOUR });
+  const nextUpdateDelayMillis = nextUpdate.diff(now).milliseconds;
+  return nextUpdateDelayMillis;
+};
+
+const cardsNeedUpdate = (lastUpdateDateJS, nowOffsetMinutes = 0) => {
+  const now = DateTime.now()
+    .setZone(TIMEZONE_IANA)
+    .plus({ minutes: nowOffsetMinutes });
+  const update = DateTime.fromJSDate(lastUpdateDateJS).setZone(TIMEZONE_IANA);
+
+  const sameDay = update.hasSame(now, "day");
+  const pastUpdateTime = now.hour >= UPDATE_HOUR;
+
+  return !sameDay && pastUpdateTime;
+};
+
 module.exports = (app) => {
   const router = Router();
   app.use("/cards", router);
 
   router.get("/", (_, res) => {
     const respose = {
-      type: "",
       timestamp: "",
       cards: [],
+      nextGetDelayMillis: GET_RETRY_DELAY_MILLIS,
     };
 
     Cards.findOne()
@@ -33,14 +61,27 @@ module.exports = (app) => {
       .select("-_id -__v")
       .lean()
       .then((result) => {
-        if (!result) {
-          respose.type = "MADE UP DATA";
-          respose.cards.push("0", "1", "2");
+        if (!result || getRetries > GET_RETRY_LIMIT) {
+          // TODO: random draw
+          const cards = [0, 1, 2];
+          new Cards({ cards }).save();
+          respose.cards.push(...cards);
           respose.timestamp = new Date().toISOString();
+          respose.nextGetDelayMillis = getNextUpdateDelayMillis();
+          getRetries = 0;
         } else {
-          respose.type = "REAL DATA";
           respose.cards.push(...result.cards);
           respose.timestamp = result.updatedAt.toISOString();
+
+          const stale = cardsNeedUpdate(result.updatedAt, 0);
+
+          if (stale) {
+            respose.nextGetDelayMillis = GET_RETRY_DELAY_MILLIS;
+            getRetries++;
+          } else {
+            respose.nextGetDelayMillis = getNextUpdateDelayMillis();
+            getRetries = 0;
+          }
         }
 
         res.status(200).send({
@@ -60,6 +101,8 @@ module.exports = (app) => {
     Cards.findOne()
       .sort({ updatedAt: -1 })
       .then((result) => {
+        const nextPostDelayMillis = getNextUpdateDelayMillis();
+
         const response = {
           in: {
             type: "INPUT",
@@ -71,23 +114,16 @@ module.exports = (app) => {
             timestamp: DateTime.now().toUTC(),
             cards: [...cards],
           },
+          nextPostDelayMillis,
         };
 
         if (!result) {
           response.out.type = "CREATE CARDS";
           new Cards({ cards }).save();
         } else {
-          const now = DateTime.now()
-            .setZone(TIMEZONE_IANA)
-            .plus({ minutes: 15 });
-          const update = DateTime.fromJSDate(result.updatedAt).setZone(
-            TIMEZONE_IANA
-          );
+          const stale = cardsNeedUpdate(result.updatedAt, 15);
 
-          const sameDay = update.hasSame(now, "day");
-          const pastUpdateTime = now.hour >= UPDATE_HOUR;
-
-          if (!sameDay && pastUpdateTime) {
+          if (stale) {
             response.out.type = "UPDATE CARDS";
             new Cards({ cards }).save();
           } else {
