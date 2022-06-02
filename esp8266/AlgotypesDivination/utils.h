@@ -1,12 +1,15 @@
 #pragma once
 
+#include <ArduinoJson.h>
 #include <ESP8266WiFi.h>
 #include <WiFiClientSecure.h>
 
 #include "parameters.h"
 
-bool postCardsToServer(int cards[3]) {
-  bool success = false;
+const long POST_PERIOD_RETRY = 1 * 60 * 1000;
+
+long postCardsToServer(int cards[3]) {
+  long nextPostDelayMillis = POST_PERIOD_RETRY;
 
   WiFiClientSecure httpClient;
   httpClient.setFingerprint(API_FINGERPRINT);
@@ -14,12 +17,7 @@ bool postCardsToServer(int cards[3]) {
 
   String postPath = API_ENDPOINT + "/" + API_TOKEN;
 
-  if (!httpClient.connect(API_HOST, API_PORT)) {
-    Serial.println("Couldn't connect to server ...");
-    return success;
-  }
-
-  String body = "{ \"cards\" : \"[" +
+  String postBody = "{ \"cards\" : \"[" +
                 String(cards[0]) + "," +
                 String(cards[1]) + "," +
                 String(cards[2]) + "]\" }";
@@ -27,8 +25,15 @@ bool postCardsToServer(int cards[3]) {
   String postContent = "POST " + postPath + " HTTP/1.1\r\n" +
                        "Host: " + API_HOST + ":" + API_PORT + "\r\n" +
                        "Content-Type: application/json" + "\r\n" +
-                       "Content-Length: " + body.length() + "\r\n\r\n" +
-                       body + "\r\n";
+                       "Content-Length: " + postBody.length() + "\r\n\r\n" +
+                       postBody + "\r\n";
+
+  Serial.printf("POST: %s\n", postBody.c_str());
+
+  if (!httpClient.connect(API_HOST, API_PORT)) {
+    Serial.println("Couldn't connect to server ...");
+    return POST_PERIOD_RETRY;
+  }
 
   httpClient.print(postContent);
   while (!httpClient.available());
@@ -36,15 +41,24 @@ bool postCardsToServer(int cards[3]) {
   while (httpClient.available()) {
     String line = httpClient.readStringUntil('\n');
     if (line.indexOf("success") > 0) {
-      Serial.println(line);
-      success = true;
-      break;
+      Serial.printf("Response: %s\n", line.c_str());
+
+      StaticJsonDocument<128> responseDoc;
+      StaticJsonDocument<32> responseFilter;
+      responseFilter["data"]["nextPostDelayMillis"] = true;
+
+      DeserializationError error = deserializeJson(responseDoc, line, DeserializationOption::Filter(responseFilter));
+      if (!error) {
+        nextPostDelayMillis = responseDoc["data"]["nextPostDelayMillis"];
+        Serial.printf("Next POST in %d millis\n", nextPostDelayMillis);
+        break;
+      }
     }
   }
 
   httpClient.print("Connection: close\r\n\r\n");
   httpClient.stop();
-  return success;
+  return nextPostDelayMillis;
 }
 
 void connectToWiFi() {

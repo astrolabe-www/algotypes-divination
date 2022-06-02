@@ -7,9 +7,6 @@
 #include "utils.h"
 #include "PacketCounter.h"
 
-const long POST_PERIOD = 60 * 60 * 1000;
-const long POST_PERIOD_RETRY = 1 * 60 * 1000;
-
 const long COUNT_PERIOD = 15 * 60 * 1000;
 
 unsigned long nextPost = 0;
@@ -37,13 +34,7 @@ void loop() {
       }
 
       connectToWiFi();
-      if (postCardsToServer(CARDS)) {
-        Serial.println("POSTed");
-        nextPost = now + POST_PERIOD;
-      } else {
-        Serial.println("Retry in 1 minute");
-        nextPost = now + POST_PERIOD_RETRY;
-      }
+      nextPost = now + postCardsToServer(CARDS);
       disconnectFromWiFi();
     } else if (now > nextCount) {
       PacketCounter::start();
