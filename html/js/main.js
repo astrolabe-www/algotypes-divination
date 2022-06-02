@@ -13,6 +13,19 @@ async function getCards() {
 
 const toHexString = (x) => ("00" + x.toString(16)).slice(-2).toUpperCase();
 
+const setFadeDelay = () => {
+  [0, 1, 2]
+    .map((value) => ({ value, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ value }) => value)
+    .forEach((g, i) => {
+      const delay = `${0.5 + i * 0.25}s`;
+      Array.from(document.getElementsByClassName(`card-group-${g}`)).forEach(
+        (el) => (el.style.transitionDelay = delay)
+      );
+    });
+};
+
 const fadeCards = (className, val) => {
   const cardEls = Array.from(document.getElementsByClassName(className));
   cardEls.forEach((el) => (el.style.opacity = val));
@@ -40,6 +53,7 @@ function updateCards(cards) {
 }
 
 function fadeUpdate() {
+  setFadeDelay();
   setTimeout(() => fadeCards("front", 0), 1);
   setTimeout(() => fadeCards("back", 1), FADE_DURATION);
   setTimeout(() => update(), 1000);
