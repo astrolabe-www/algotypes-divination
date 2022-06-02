@@ -21,9 +21,19 @@ async function getCards() {
 
 const toHexString = (x) => ("00" + x.toString(16)).slice(-2).toUpperCase();
 
+const dailySequence = (i) => {
+  const now = new Date();
+  const diff = now - new Date(now.getFullYear(), 0, 0);
+  const oneDay = 24 * 60 * 60 * 1000;
+  const dayOfYear = Math.floor(diff / oneDay);
+
+  const x = Math.sin(dayOfYear + i) * 1e4;
+  return x - Math.floor(x);
+};
+
 const draw3Cards = () => {
   const RANDOM_CARDS = Array.from({ length: 22 }, (_, i) => i);
-  return RANDOM_CARDS.map((value) => ({ value, sort: Math.random() }))
+  return RANDOM_CARDS.map((value, i) => ({ value, sort: dailySequence(i) }))
     .sort((a, b) => a.sort - b.sort)
     .map(({ value }) => value)
     .slice(0, 3);
