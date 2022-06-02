@@ -78,9 +78,12 @@ body {
 }
 
 .card-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 84%;
   flex-basis: 0;
   flex-grow: 1;
-  width: 84%;
   border: #000 1px solid;
   background-color: #fff;
   padding: var(--card-text-padding-v) var(--card-text-padding-h);
