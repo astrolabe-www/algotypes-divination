@@ -45,16 +45,12 @@ const cardsNeedUpdate = (lastUpdateDateJS, nowOffsetMinutes = 0) => {
   return !sameDay && pastUpdateTime;
 };
 
-const RANDOM_CARDS = Array.from({ length: 22 }, (_, i) => i);
 const draw3Cards = () => {
-  for (let i = 0; i < RANDOM_CARDS.length - 1; i++) {
-    const randRange = RANDOM_CARDS.length - i;
-    let j = i + Math.floor(randRange * Math.random());
-    let temp = RANDOM_CARDS[i];
-    RANDOM_CARDS[i] = RANDOM_CARDS[j];
-    RANDOM_CARDS[j] = temp;
-  }
-  return RANDOM_CARDS.slice(0, 3);
+  const RANDOM_CARDS = Array.from({ length: 22 }, (_, i) => i);
+  return RANDOM_CARDS.map((value) => ({ value, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ value }) => value)
+    .slice(0, 3);
 };
 
 module.exports = (app) => {
