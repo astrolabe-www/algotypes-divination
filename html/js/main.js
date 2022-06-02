@@ -1,17 +1,4 @@
-const DateTime = luxon.DateTime;
 const API_URL = "https://algotypes-divination.herokuapp.com/cards";
-
-const REFRESH_LATER = 1 * 60 * 60 * 1000;
-const REFRESH_SOON = 60 * 1000;
-
-const RETRY_LIMIT = 32;
-let retryCount = 0;
-
-const PLACEHOLDER = `
-Two satellites recently exchanged more than 200 gigabits of data over a distance of about 60 miles (100 kilometers) using laser communication in space. The achievement sets the stage for yet another satellite constellation.
-<br><br>
-Satellites generally don't communicate directly with each other. Instead, they use radio signals to transfer data down to a ground station on Earth, which then relays this data to another satellite. Optical terminals between satellites are considered to be faster and more secure.
-`;
 
 async function getCards() {
   const response = await fetch(API_URL);
@@ -19,7 +6,6 @@ async function getCards() {
   if (!responseJson.success) {
     throw new Error("getCards was unsuccessful");
   }
-  retryCount += 1;
   return responseJson.data;
 }
 
@@ -60,17 +46,8 @@ function fadeUpdate() {
 function update() {
   getCards()
     .then((res) => {
-      const cardTime = DateTime.fromISO(res.timestamp, { zone: "utc" });
-      const cardFresh = DateTime.utc().hasSame(cardTime, "day");
-      const overLimit = retryCount > RETRY_LIMIT;
       updateCards(res.cards);
-
-      if (cardFresh || overLimit) {
-        retryCount = 0;
-        setTimeout(fadeUpdate, REFRESH_LATER);
-      } else {
-        setTimeout(fadeUpdate, REFRESH_SOON);
-      }
+      setTimeout(fadeUpdate, parseInt(res.nextGetDelayMillis));
     })
     .catch((e) => console.log(`${e}`));
 }
