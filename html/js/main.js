@@ -2,16 +2,32 @@ const API_URL = "https://algotypes-divination.herokuapp.com/cards";
 
 const FADE_DURATION = 500;
 
+const RETRY_LIMIT = 6;
+const RETRY_DELAY = 10 * 1000;
+let errorCount = 0;
+
 async function getCards() {
-  const response = await fetch(API_URL);
-  const responseJson = await response.json();
-  if (!responseJson.success) {
-    throw new Error("getCards was unsuccessful");
+  try {
+    const response = await fetch(API_URL);
+    const responseJson = await response.json();
+    if (!responseJson.success) {
+      throw new Error("getCards was unsuccessful");
+    }
+    return responseJson.data;
+  } catch (e) {
+    throw e;
   }
-  return responseJson.data;
 }
 
 const toHexString = (x) => ("00" + x.toString(16)).slice(-2).toUpperCase();
+
+const draw3Cards = () => {
+  const RANDOM_CARDS = Array.from({ length: 22 }, (_, i) => i);
+  return RANDOM_CARDS.map((value) => ({ value, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ value }) => value)
+    .slice(0, 3);
+};
 
 const setFadeDelay = () => {
   [0, 1, 2]
@@ -65,7 +81,17 @@ function update() {
       updateCards(res.cards);
       setTimeout(fadeUpdate, parseInt(res.nextGetDelayMillis));
     })
-    .catch((e) => console.log(`${e}`));
+    .catch((e) => {
+      console.log(`${e}`);
+      errorCount++;
+
+      if (errorCount > RETRY_LIMIT) {
+        updateCards(draw3Cards());
+        errorCount = 0;
+      } else {
+        setTimeout(fadeUpdate, RETRY_DELAY);
+      }
+    });
 }
 
 document.addEventListener("DOMContentLoaded", (_) => {
