@@ -46,7 +46,7 @@ body {
   height: 100%;
   border-radius: var(--card-border-radius);
   box-sizing: border-box;
-  transition: opacity 0.25s linear;
+  transition: opacity 0.75s linear;
 }
 
 .card-face.back {

@@ -1,5 +1,7 @@
 const API_URL = "https://algotypes-divination.herokuapp.com/cards";
 
+const FADE_DURATION = 500;
+
 async function getCards() {
   const response = await fetch(API_URL);
   const responseJson = await response.json();
@@ -34,12 +36,12 @@ function updateCards(cards) {
   });
 
   setTimeout(() => fadeCards("back", 0), 1);
-  setTimeout(() => fadeCards("front", 1), 200);
+  setTimeout(() => fadeCards("front", 1), FADE_DURATION);
 }
 
 function fadeUpdate() {
   setTimeout(() => fadeCards("front", 0), 1);
-  setTimeout(() => fadeCards("back", 1), 200);
+  setTimeout(() => fadeCards("back", 1), FADE_DURATION);
   setTimeout(() => update(), 1000);
 }
 
