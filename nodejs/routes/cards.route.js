@@ -95,6 +95,12 @@ module.exports = (app) => {
           success: true,
           data: respose,
         });
+      })
+      .catch((err) => {
+        res.status(500).send({
+          success: false,
+          data: { error: `${err}` },
+        });
       });
   });
 
