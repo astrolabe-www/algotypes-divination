@@ -134,7 +134,7 @@ module.exports = (app) => {
           response.out.type = "CREATE CARDS";
           new Cards({ cards }).save();
         } else {
-          const stale = cardsNeedUpdate(result.updatedAt, 15);
+          const stale = cardsNeedUpdate(result.updatedAt, 0);
 
           if (stale) {
             response.out.type = "UPDATE CARDS";
