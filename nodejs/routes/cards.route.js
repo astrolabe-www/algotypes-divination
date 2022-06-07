@@ -33,10 +33,8 @@ const getNextUpdateDelayMillis = () => {
   return nextUpdateDelayMillis;
 };
 
-const cardsNeedUpdate = (lastUpdateDateJS, nowOffsetMinutes = 0) => {
-  const now = DateTime.now()
-    .setZone(TIMEZONE_IANA)
-    .plus({ minutes: nowOffsetMinutes });
+const cardsNeedUpdate = (lastUpdateDateJS) => {
+  const now = DateTime.now().setZone(TIMEZONE_IANA);
   const update = DateTime.fromJSDate(lastUpdateDateJS).setZone(TIMEZONE_IANA);
 
   const sameDay = update.hasSame(now, "day");
@@ -80,7 +78,7 @@ module.exports = (app) => {
           respose.cards.push(...result.cards);
           respose.timestamp = result.updatedAt.toISOString();
 
-          const stale = cardsNeedUpdate(result.updatedAt, 0);
+          const stale = cardsNeedUpdate(result.updatedAt);
 
           if (stale) {
             respose.nextGetDelayMillis = GET_RETRY_DELAY_MILLIS;
@@ -134,7 +132,7 @@ module.exports = (app) => {
           response.out.type = "CREATE CARDS";
           new Cards({ cards }).save();
         } else {
-          const stale = cardsNeedUpdate(result.updatedAt, 0);
+          const stale = cardsNeedUpdate(result.updatedAt);
 
           if (stale) {
             response.out.type = "UPDATE CARDS";
