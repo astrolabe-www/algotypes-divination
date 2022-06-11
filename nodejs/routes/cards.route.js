@@ -67,7 +67,7 @@ module.exports = (app) => {
       .select("-_id -__v")
       .lean()
       .then((result) => {
-        if (!result || getRetries > GET_RETRY_LIMIT) {
+        if (!result || getRetries >= GET_RETRY_LIMIT) {
           const cards = draw3Cards();
           new Cards({ cards }).save();
           respose.cards.push(...cards);
