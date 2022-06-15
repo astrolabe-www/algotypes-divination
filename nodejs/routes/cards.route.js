@@ -35,12 +35,14 @@ const getNextUpdateDelayMillis = () => {
 
 const cardsNeedUpdate = (lastUpdateDateJS) => {
   const now = DateTime.now().setZone(TIMEZONE_IANA);
-  const update = DateTime.fromJSDate(lastUpdateDateJS).setZone(TIMEZONE_IANA);
+  const lastUpdate =
+    DateTime.fromJSDate(lastUpdateDateJS).setZone(TIMEZONE_IANA);
+  const updateDayOffset = lastUpdate.hour >= UPDATE_HOUR ? 1 : 0;
+  const lastUpdatesNextUpdate = lastUpdate
+    .startOf("day")
+    .plus({ days: updateDayOffset, hours: UPDATE_HOUR });
 
-  const sameDay = update.hasSame(now, "day");
-  const pastUpdateTime = now.hour >= UPDATE_HOUR;
-
-  return !sameDay && pastUpdateTime;
+  return now >= lastUpdatesNextUpdate;
 };
 
 const draw3Cards = () => {
