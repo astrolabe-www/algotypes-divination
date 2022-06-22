@@ -6,6 +6,7 @@ const Cards = require("../models/cards.model");
 const TIMEZONE_IANA = "Europe/Berlin";
 const UPDATE_HOUR = 8;
 
+const UPDATE_DELAY_BUFFER_MILLIS = 5 * 1000;
 const GET_RETRY_DELAY_MILLIS = 2 * 60 * 1000;
 const GET_RETRY_LIMIT = 8;
 
@@ -30,7 +31,7 @@ const getNextUpdateDelayMillis = () => {
     .startOf("day")
     .plus({ days: updateDayOffset, hours: UPDATE_HOUR });
   const nextUpdateDelayMillis = nextUpdate.diff(now).milliseconds;
-  return nextUpdateDelayMillis;
+  return nextUpdateDelayMillis + UPDATE_DELAY_BUFFER_MILLIS;
 };
 
 const cardsNeedUpdate = (lastUpdateDateJS) => {
