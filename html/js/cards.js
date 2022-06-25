@@ -231,8 +231,8 @@ const CARDS = [
       pt: "Chaves Diffie-Hellman",
     },
     algorithm: {
-      en: "Asymmetric cryptography is based on the idea that the password/key used to encrypt data can be made public, while the password/key used to decrypt data should be kept private. Encryption with a public key can only be undone by decrypting with its private key. The Diffie-Hellman key exchange is a method of creating and securely exchanging these cryptographic keys.",
-      pt: "A criptografia assimétrica é baseada na ideia de que a senha usada para criptografar dados pode ser pública, enquanto a senha usada para descriptografar deve permanecer privada. Dados criptografados com uma chave pública só podem ser lidos usando sua chave privada. A troca de chaves Diffie-Hellman é um método seguro de criar e trocar chaves criptográficas em espaços públicos como a internet.",
+      en: "The Diffie-Hellman key exchange is a method for creating and securely exchanging keys/passwords that can be used to send and receive encrypted data.",
+      pt: "A troca de chaves Diffie-Hellman é um método seguro de criar e trocar chaves/senhas usadas para enviar e receber mensagens criptografadas.",
     },
     message: {
       en: "Be prepared: make sure you have all the pieces before starting to solve the puzzle. It might mean waiting for the moment with patience and moderation.",
@@ -331,7 +331,7 @@ const CARDS = [
       pt: "Esse algoritmo é usado para calcular o menor polígono convexo que pode circunscrever completamente um objeto. Sistemas de navegação autônoma usam a forma simples do fecho convexo mais eficientemente para evitar colisões.",
     },
     message: {
-      en: "Judiciously gather wisdom from tradition and customs. Be mindful of walls and enclosures. Design your own rituals to strengthen the non-material aspects of your life.",
+      en: "Judiciously gather wisdom from tradition and customs. Be mindful of enclosures. Design your own rituals to strengthen the non-material aspects of your life.",
       pt: "Esse algoritmo simboliza a mistura de sabedorias tradicionais com conhecimentos contemporâneos. Esteja atento a paredes e cercas. Invente seus próprios rituais para fortalecer os aspectos não materiais de sua vida.",
     },
   },
