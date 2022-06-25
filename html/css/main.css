@@ -1,11 +1,11 @@
 :root {
   --card-width: 25%;
   --card-border-radius: 0.666vw;
-  --card-title-font-size: 1.15vw;
-  --card-title-padding-v-small: 0.35vw;
+  --card-title-font-size: 1.4vw;
+  --card-title-padding-v-small: 0.5vw;
   --card-title-padding-v-large: 1.71vw;
   --card-title-padding-h: 0;
-  --card-text-font-size: 1.15vw;
+  --card-text-font-size: 1.3vw;
   --card-text-padding-v: 1.1vw;
   --card-text-padding-h: 1.4vw;
 }
