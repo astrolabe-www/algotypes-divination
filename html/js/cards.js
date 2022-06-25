@@ -327,8 +327,8 @@ const CARDS = [
       pt: "Fecho Convexo",
     },
     algorithm: {
-      en: "The convex hull algorithm is used to find the smallest convex polygon that can completely circumscribe an object. This is useful in autonomous navigation systems where this simpler shape can more efficiently be used to avoid collisions.",
-      pt: "Esse algoritmo é usado para calcular o menor polígono convexo que pode circunscrever completamente um objeto. Essa operação é extremamente útil em sistemas de navegação autônoma porque a forma simples do fecho convexo pode ser usada mais eficientemente para evitar colisões.",
+      en: "The convex hull algorithm is used to find the smallest convex polygon that can completely circumscribe an object. Autonomous navigation systems can then more efficiently use this simpler shape to avoid collisions.",
+      pt: "Esse algoritmo é usado para calcular o menor polígono convexo que pode circunscrever completamente um objeto. Sistemas de navegação autônoma usam a forma simples do fecho convexo mais eficientemente para evitar colisões.",
     },
     message: {
       en: "Judiciously gather wisdom from tradition and customs. Be mindful of walls and enclosures. Design your own rituals to strengthen the non-material aspects of your life.",
