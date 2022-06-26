@@ -6,6 +6,7 @@
 
 #include "utils.h"
 #include "PacketCounter.h"
+#include "AccessPoint.h"
 
 const long COUNT_PERIOD = 15 * 60 * 1000;
 
@@ -27,6 +28,7 @@ void loop() {
 
   if (!PacketCounter::isRunning()) {
     if (now > nextPost) {
+      AccessPoint::stop();
       for (int i = 0; i < NUM_CARDS; i++) {
         int cardRoot = PacketCounter::orderedChannels[2 * i];
         int cardMod = PacketCounter::orderedChannels[2 * i + 1];
@@ -37,8 +39,11 @@ void loop() {
       nextPost = now + postCardsToServer(CARDS);
       disconnectFromWiFi();
     } else if (now > nextCount) {
+      AccessPoint::stop();
       PacketCounter::start();
       nextCount = now + COUNT_PERIOD;
+    } else if (!AccessPoint::isRunning()) {
+      AccessPoint::start();
     }
   } else {
     delay(10);

@@ -18,9 +18,9 @@ long postCardsToServer(int cards[3]) {
   String postPath = API_ENDPOINT + "/" + API_TOKEN;
 
   String postBody = "{ \"cards\" : \"[" +
-                String(cards[0]) + "," +
-                String(cards[1]) + "," +
-                String(cards[2]) + "]\" }";
+                    String(cards[0]) + "," +
+                    String(cards[1]) + "," +
+                    String(cards[2]) + "]\" }";
 
   String postContent = "POST " + postPath + " HTTP/1.1\r\n" +
                        "Host: " + API_HOST + ":" + API_PORT + "\r\n" +
