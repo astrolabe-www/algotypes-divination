@@ -8,7 +8,7 @@ const UPDATE_HOUR = 8;
 
 const UPDATE_DELAY_BUFFER_MILLIS = 5 * 1000;
 const GET_RETRY_DELAY_MILLIS = 2 * 60 * 1000;
-const GET_RETRY_LIMIT = 8;
+const GET_RETRY_LIMIT = 4;
 
 let getRetries = 0;
 
