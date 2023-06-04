@@ -35,7 +35,7 @@ const CARDS = [
     number: 0x02,
     link: "https://outras.ml/algotypes/eigenvalue/",
     name: {
-      en: "PageRank",
+      en: "Page 4 Rank",
       pt: "PageRank",
     },
     algorithm: {
