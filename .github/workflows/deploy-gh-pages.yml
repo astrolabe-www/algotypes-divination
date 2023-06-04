@@ -4,8 +4,10 @@ on:
   push:
     branches:
       - main
-    path:
-     - 'html/**'
+    paths-ignore:
+      - 'esp8266/**'
+      - 'nodejs/**'
+      - '.gitignore'
 
 jobs:
   build:
