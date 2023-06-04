@@ -4,18 +4,17 @@
   "description": "algotypes-divination, the backend",
   "main": "index.js",
   "scripts": {
-    "start": "node index",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.20.0",
+    "body-parser": "^1.20.2",
     "cors": "^2.8.5",
-    "dotenv": "^16.0.0",
-    "express": "^4.18.1",
-    "helmet": "^5.0.2",
-    "luxon": "^2.3.2",
-    "mongoose": "^6.3.2"
+    "dotenv": "^16.1.3",
+    "express": "^4.18.2",
+    "helmet": "^7.0.0",
+    "luxon": "^3.3.0",
+    "mongoose": "^7.2.2"
   }
 }
