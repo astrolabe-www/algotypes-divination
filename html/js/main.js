@@ -1,4 +1,4 @@
-const API_URL = "https://algotypes-divination.herokuapp.com/cards";
+const API_URL = "https://algotypes-divination.onrender.com/cards";
 
 const FADE_DURATION = 500;
 
