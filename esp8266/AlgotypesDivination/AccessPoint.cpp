@@ -1,4 +1,3 @@
-// fake comment
 #include "AccessPoint.h"
 
 #include <ESP8266WiFi.h>
