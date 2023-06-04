@@ -19,7 +19,7 @@ const CARDS = [
     number: 0x01,
     link: "https://outras.ml/algotypes/fft/",
     name: {
-      en: "Fast FourierTransform",
+      en: "Fast Fourier Transform",
       pt: "Transformação Rápida de Fourier",
     },
     algorithm: {
