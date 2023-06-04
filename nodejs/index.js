@@ -20,7 +20,7 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => {
-    console.log("Connected to iiii database....");
+    console.log("Connected to database....");
   });
 
 const corsOptions = {
